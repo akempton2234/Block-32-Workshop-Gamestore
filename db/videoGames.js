@@ -28,17 +28,47 @@ async function getVideoGameById(id) {
 
 // POST - /api/video-games - create a new video game
 async function createVideoGame(body) {
-    // LOGIC GOES HERE
+    try {
+        const { title, platform, release_date } = body;
+        const { rows: [newVideoGame] } = await client.query(`
+            INSERT INTO videoGames (title, platform, release_date)
+            VALUES ($1, $2, $3)
+            RETURNING *;
+        `, [title, platform, release_date]);
+        return newVideoGame;
+    } catch (error) {
+        throw error;
+    }
 }
+
 
 // PUT - /api/video-games/:id - update a single video game by id
 async function updateVideoGame(id, fields = {}) {
-    // LOGIC GOES HERE
+    try {
+        const { title, platform, release_date } = fields;
+        const { rows: [updatedVideoGame] } = await client.query(`
+            UPDATE videoGames
+            SET title = $1, platform = $2, release_date = $3
+            WHERE id = $4
+            RETURNING *;
+        `, [title, platform, release_date, id]);
+        return updatedVideoGame;
+    } catch (error) {
+        throw error;
+    }
 }
+
 
 // DELETE - /api/video-games/:id - delete a single video game by id
 async function deleteVideoGame(id) {
-    // LOGIC GOES HERE
+    try {
+        await client.query(`
+            DELETE FROM videoGames
+            WHERE id = $1;
+        `, [id]);
+    } catch (error) {
+        throw error;
+    }
 }
 
 module.exports = {
